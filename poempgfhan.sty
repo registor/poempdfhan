@@ -1,0 +1,136 @@
+% 卷轴风格诗词排版宏包
+% 原代码来自LaTeX技术交流 2 群(478023327)网友"上海-TJAD-Chennanzhang"(2019.11.12)
+% 感觉非常符合个人需求，特将其写成宏包，并添加了必要的参数控制。
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{poempdfhan}[2019/11/14 v1.0, Geng Nan nangeng@qq.com.]
+%
+%--------------------------------------------------------------------------------
+% 载入tcolorbox宏包，并加载需要的库
+%--------------------------------------------------------------------------------
+% 
+\RequirePackage{tcolorbox}
+\tcbuselibrary{skins, xparse}
+%
+%--------------------------------------------------------------------------------
+% 载入tikz宏包，并加载需要的库
+%--------------------------------------------------------------------------------
+%
+\RequirePackage{tikz}
+\usetikzlibrary{decorations.markings}
+%
+%--------------------------------------------------------------------------------
+% 载入xpinyin宏包
+%--------------------------------------------------------------------------------
+%
+\RequirePackage{xpinyin}
+% 如果需要改变拼音字体，可以使用如下两个命令进行设置
+% 为避免字体引起的无法编译问题，此处禁用这两个命令
+%\newfontfamily\PinYinFont{TeX Gyre Adventor}
+%\xpinyinsetup{ratio=0.45,font=\PinYinFont}
+%
+%--------------------------------------------------------------------------------
+% 载入林莲枝前辈的传统中国颜色cncolours宏包和汉风图纹pgfornament-han宏包
+%--------------------------------------------------------------------------------
+%
+\RequirePackage{cncolours}
+\RequirePackage{pgfornament-han}
+%
+%--------------------------------------------------------------------------------
+% 颜色设置
+%--------------------------------------------------------------------------------
+%
+\colorlet{大轴}{朱红}
+\colorlet{轴心}{栗色}
+%
+%--------------------------------------------------------------------------------
+% tcolorbox卷轴样式设置
+%--------------------------------------------------------------------------------
+%
+\tcbset{
+  halign=center,
+  valign=center,
+  poem margin/.style 2 args={% 用参数控制宽度及左右内边距
+    width=#1\linewidth,
+    left=#2mm,
+    right=#2mm,    
+  },
+  % left=10mm,
+  % right=10mm,
+  top=8mm,
+  bottom=8mm,
+  poem style/.style = {% 卷轴装饰
+    before skip=30pt,
+    after skip=30pt,
+    toptitle=5mm,
+    bottomtitle=5mm,
+    enhanced,
+    colback=牙色,
+    overlay={
+      \fill[
+        decorate,
+        decoration={
+          markings,
+          mark = between positions 0.05 and 0.97 step 0.05 with{%
+            \node{\pgfornamenthan[color=red, scale=0.2]{41}};
+          }
+        }
+        ]([yshift=-3mm]frame.north west)--([yshift=-3mm]frame.north east);
+      \fill[
+        decorate,
+        decoration={
+          markings,
+          mark = between positions 0.05 and 0.97 step 0.05 with{%
+            \node{\pgfornamenthan[color=red, scale=0.2]{41}};
+          }
+        }
+        ]([yshift=3mm]frame.south west)--([yshift=3mm]frame.south east);
+      \fill[ball color=轴心]([xshift=2mm,yshift=3mm]frame.north west)rectangle([xshift=4mm,yshift=-3mm]frame.south west);
+      \fill[ball color=轴心]([xshift=-2mm,yshift=3mm]frame.north east)rectangle([xshift=-4mm,yshift=-3mm]frame.south east);
+      \fill[ball color=大轴](frame.north west)rectangle([xshift=6mm]frame.south west);
+      \fill[ball color=大轴]([xshift=-6mm]frame.north east)rectangle(frame.south east);
+      \fill[ball color=轴心]([xshift=3mm,yshift=3mm]frame.north west)circle(2mm);
+      \fill[ball color=轴心]([xshift=3mm,yshift=-3mm]frame.south west)circle(2mm);
+      \fill[ball color=轴心]([xshift=-3mm,yshift=3mm]frame.north east)circle(2mm);
+      \fill[ball color=轴心]([xshift=-3mm,yshift=-3mm]frame.south east)circle(2mm);
+    },
+  },
+}
+
+% 定义诗词排版环境poem，共7个参数
+% 参数1：可选参数，为*时，加注拼音
+% 参数2：可选参数，卷轴宽度，取\linewidth的倍数，默认值为0.8
+% 参数3：可选参数，卷轴内左右边距，单位为mm，默认值为10
+% 参数4：必选参数，诗词年代
+% 参数5：必选参数，诗词作者
+% 参数6：必选参数，诗词标题
+% 参数7：可选参数，诗词字号(ctex宏集中\zihao{}命令的取值)，默认值为2
+\DeclareTColorBox{poem}{s O{0.8} O{10} m m m !O{2}}{%
+  poem margin={#2}{#3},%
+  poem style,%
+  IfBooleanTF={#1}{
+    before upper={\begin{pinyinscope}%
+        {\zihao{-2}\heiti 《#6》}%
+        \vskip5pt%
+        {\zihao{-4}\fangsong 【#4】\hspace{0.5\ccwd} #5}%
+        \vskip5pt%
+        \zihao{#7}\linespread{1.6}\kaishu\selectfont%
+        % 调整正文字距离
+        \ziju{0.3}%
+      },
+    after upper={\end{pinyinscope}},
+  }{
+    before upper={%
+        {\zihao{-2}\heiti 《#6》}%
+        \vskip5pt%
+        {\zihao{-4}\fangsong 【#4】\hspace{0.5\ccwd} #5}%
+        \vskip5pt%
+        \zihao{#7}\linespread{1.6}\kaishu\selectfont%
+        % 调整正文字距离
+        \ziju{0.3}%
+      },    
+  },  
+}
+
+\endinput
+%%
+%% End of file `poempgfhan.sty'.
